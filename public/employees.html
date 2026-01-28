@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Employees</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="app">
+
+
+  <aside class="sidebar">
+    <h2>HR Admin</h2>
+
+    <a href="dashboard.html"><span>Dashboard</span></a>
+    <a href="employees.html" class="active"><span>Employees</span></a>
+    <a href="attendance.html"><span>Attendance</span></a>
+    <a href="leave.html"><span>Leave</span></a>
+    <a href="hr.html"><span>HR / Admin</span></a>
+    <button id="logoutBtn" class="theme-toggle">Logout</button>
+  </aside>
+
+ 
+  <main class="main">
+
+
+    <div class="topbar">
+      <h1>Employees</h1>
+      <div style="display:flex; gap:12px;">
+        <button class="btn">+ Add Employee</button>
+        <button id="themeToggle" class="theme-toggle">Light / Dark</button>
+      </div>
+    </div>
+
+
+    <div class="card" style="margin-bottom: 20px;">
+      <input
+        type="text"
+        placeholder="Search employees..."
+        style="
+          width: 100%;
+          padding: 14px;
+          border-radius: 10px;
+          border: 1px solid var(--border);
+          background: var(--surface-solid);
+          color: var(--text);
+        "
+      />
+    </div>
+
+  
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>Engineering</td>
+            <td>Frontend Developer</td>
+            <td><span class="badge success">Active</span></td>
+            <td><button class="btn btn-view">View</button></td>
+          </tr>
+          <tr>
+            <td>Mary Okafor</td>
+            <td>HR</td>
+            <td>HR Manager</td>
+            <td><span class="badge success">Active</span></td>
+            <td><button class="btn btn-view">View</button></td>
+          </tr>
+          <tr>
+            <td>Samuel Ade</td>
+            <td>Finance</td>
+            <td>Accountant</td>
+            <td><span class="badge warning">On Leave</span></td>
+            <td><button class="btn btn-view">View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+
+<div id="employeeModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,0.45);
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+">
+  <div class="card" style="width: 420px;">
+    <h3>Employee Profile</h3>
+    <p style="margin-top:10px;"><strong>Name:</strong> John Doe</p>
+    <p><strong>Department:</strong> Engineering</p>
+    <p><strong>Role:</strong> Frontend Developer</p>
+    <p><strong>Status:</strong> Active</p>
+
+    <div style="margin-top:20px; text-align:right;">
+      <button class="btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+  const allowedRoles = ['Admin','HR Manager'];
+  const user = checkAccess(allowedRoles);
+
+  if(user) setupSidebar(user);
+  if(user) setupLogout('logoutBtn');
+</script>
+
+
+<script src="js/ui.js"></script>
+<script>
+  const modal = document.getElementById("employeeModal");
+  const viewButtons = document.querySelectorAll(".btn-view");
+
+  viewButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      modal.style.display = "flex";
+    });
+  });
+
+  function closeModal() {
+    modal.style.display = "none";
+  }
+</script>
+</body>
+</html>

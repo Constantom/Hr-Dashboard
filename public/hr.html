@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HR / Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <h2>HR Admin</h2>
+
+    <a href="dashboard.html">Dashboard</a>
+    <a href="employees.html">Employees</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="leave.html">Leave</a>
+    <a href="hr.html" class="active">HR / Admin</a>
+    <button id="logoutBtn" class="theme-toggle">Logout</button>
+  </aside>
+
+
+  <main class="main">
+
+ 
+    <div class="topbar">
+      <h1>HR / Admin</h1>
+      <button id="themeToggle" class="theme-toggle">Light / Dark</button>
+    </div>
+
+  
+    <section class="kpi-grid">
+      <div class="card">
+        <h3>Departments</h3>
+        <ul style="margin-top:15px; list-style:none; padding-left:0;">
+          <li>Engineering</li>
+          <li>HR</li>
+          <li>Finance</li>
+          <li>Marketing</li>
+          <li>Sales</li>
+          <li>Customer Support</li>
+        </ul>
+      </div>
+
+ 
+      <div class="card">
+        <h3>Roles & Permissions</h3>
+        <ul style="margin-top:15px; list-style:none; padding-left:0;">
+          <li>Admin - Full Access</li>
+          <li>HR Manager - Employee & Leave Management</li>
+          <li>Team Lead - Attendance & Reports</li>
+          <li>Employee - Self Profile & Leave Requests</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Company Settings</h3>
+        <ul style="margin-top:15px; list-style:none; padding-left:0;">
+          <li>Working Hours: 9:00 AM – 5:00 PM</li>
+          <li>Leave Policy: Annual / Sick / Casual</li>
+          <li>Overtime Policy: Enabled</li>
+          <li>Holiday Calendar: Editable</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="js/auth.js"></script>
+<script>
+  const allowedRoles = ['Admin'];
+  const user = checkAccess(allowedRoles);
+
+
+  if(user) setupSidebar(user);
+  if(user) setupLogout('logoutBtn');
+</script>
+<script src="js/ui.js"></script>
+</body>
+</html>

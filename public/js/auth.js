@@ -46,7 +46,7 @@ const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
   logoutBtn.addEventListener('click', async () => {
     try {
-      await fetch('https://hr-dashboard-orgj.onrender.com/api/logout', {
+      await fetch('https://hr-dashboardd.onrender.com/api/logout', {
         method: 'POST',
         credentials: 'include'
       });

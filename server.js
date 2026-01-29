@@ -87,10 +87,10 @@ app.get('/hr', authenticateToken, authorizeRoles(['Admin']), (req, res) => {
   res.sendFile(path.join(__dirname, 'public/hr.html'));
 });
 
-// Catch-all for frontend routing (optional for single-page behavior)
+/* Catch-all for frontend routing (optional for single-page behavior)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
-});
+});*/
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -15,7 +15,6 @@
       align-items: center;
       height: 100vh;
       background: linear-gradient(135deg, #2a9d8f, #00bfa5);
-      color: var(--text);
       overflow: hidden;
     }
 
@@ -39,20 +38,16 @@
     .login-card h2 {
       margin-bottom: 30px;
       font-weight: 600;
-      color: var(--text);
     }
 
-    .login-card input[type="email"],
-    .login-card input[type="password"] {
+    .login-card input {
       width: 100%;
       padding: 14px;
       margin: 10px 0;
       border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--surface-solid);
-      color: var(--text);
       font-size: 14px;
-      transition: border-color 0.2s;
     }
 
     .login-card input:focus {
@@ -60,7 +55,7 @@
       outline: none;
     }
 
-    .login-card .btn {
+    .btn {
       width: 100%;
       padding: 14px;
       border: none;
@@ -70,46 +65,17 @@
       font-weight: 600;
       margin-top: 18px;
       cursor: pointer;
-      transition: background 0.3s;
     }
 
-    .login-card .btn:hover {
+    .btn:hover {
       background: #21867a;
     }
 
-    .remember {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      font-size: 14px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .remember input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-
-    .remember label {
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .login-card .error {
+    .error {
       color: #ef4444;
       font-size: 14px;
       margin-top: 10px;
       display: none;
-    }
-
-    @media(max-width: 400px){
-      .login-card {
-        width: 90%;
-        padding: 30px 20px;
-      }
     }
   </style>
 </head>
@@ -121,59 +87,53 @@
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
 
-    <div class="remember">
-      <input type="checkbox" id="remember" />
-      <label for="remember">Remember me</label>
-    </div>
-
     <button class="btn" id="loginBtn">Login</button>
-    <div class="error" id="errorMsg">Please enter email and password!</div>
+    <div class="error" id="errorMsg"></div>
   </div>
 
   <script>
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`); 
-      if (parts.length === 2) return parts.pop().split(';').shift();
-    }
+    const card = document.getElementById('loginCard')
+    setTimeout(() => card.classList.add('active'), 100)
 
-    if (getCookie('token')) {
-      window.location.href = 'dashboard.html';
-    }
-  </script>
-
-  <script src="js/ui.js"></script>
-
-  <script>
-const loginBtn = document.getElementById('loginBtn')
-const errorMsg = document.getElementById('errorMsg')
-
-loginBtn.addEventListener('click', async () => {
-  const email = document.getElementById('email').value.trim()
-  const password = document.getElementById('password').value.trim()
-
-  try {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    })
-
-    const data = await res.json()
-
-    if (res.ok) {
-      localStorage.setItem('token', data.token)
+    if (document.cookie.includes('token=')) {
       window.location.href = '/dashboard'
-    } else {
-      errorMsg.textContent = data.message
-      errorMsg.style.display = 'block'
     }
-  } catch {
-    errorMsg.textContent = 'Server error'
-    errorMsg.style.display = 'block'
-  }
-})
-</script>
+
+    const loginBtn = document.getElementById('loginBtn')
+    const errorMsg = document.getElementById('errorMsg')
+
+    loginBtn.addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim()
+      const password = document.getElementById('password').value.trim()
+
+      if (!email || !password) {
+        errorMsg.textContent = 'Please enter email and password'
+        errorMsg.style.display = 'block'
+        return
+      }
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
+        })
+
+        const data = await res.json()
+
+        if (res.ok) {
+          window.location.href = '/dashboard'
+        } else {
+          errorMsg.textContent = data.message
+          errorMsg.style.display = 'block'
+        }
+      } catch {
+        errorMsg.textContent = 'Server error'
+        errorMsg.style.display = 'block'
+      }
+    })
+  </script>
 
 </body>
 </html>

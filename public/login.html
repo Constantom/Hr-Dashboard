@@ -15,12 +15,11 @@
       align-items: center;
       height: 100vh;
       background: linear-gradient(135deg, #2a9d8f, #00bfa5);
-      color: var(--text);
       overflow: hidden;
     }
 
     .login-card {
-      background: var(--surface);
+      background: #fff;
       padding: 40px 30px;
       border-radius: 16px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
@@ -39,20 +38,16 @@
     .login-card h2 {
       margin-bottom: 30px;
       font-weight: 600;
-      color: var(--text);
+      color: #333;
     }
 
-    .login-card input[type="email"],
-    .login-card input[type="password"] {
+    .login-card input {
       width: 100%;
       padding: 14px;
       margin: 10px 0;
       border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--surface-solid);
-      color: var(--text);
+      border: 1px solid #ccc;
       font-size: 14px;
-      transition: border-color 0.2s;
     }
 
     .login-card input:focus {
@@ -60,7 +55,7 @@
       outline: none;
     }
 
-    .login-card .btn {
+    .btn {
       width: 100%;
       padding: 14px;
       border: none;
@@ -70,25 +65,17 @@
       font-weight: 600;
       margin-top: 18px;
       cursor: pointer;
-      transition: background 0.3s;
     }
 
-    .login-card .btn:hover {
+    .btn:hover {
       background: #21867a;
     }
 
-    .login-card .error {
+    .error {
       color: #ef4444;
       font-size: 14px;
       margin-top: 10px;
       display: none;
-    }
-
-    @media(max-width: 400px){
-      .login-card {
-        width: 90%;
-        padding: 30px 20px;
-      }
     }
   </style>
 </head>
@@ -101,22 +88,8 @@
     <input type="password" id="password" placeholder="Password" />
 
     <button class="btn" id="loginBtn">Login</button>
-    <div class="error" id="errorMsg">Please enter email and password!</div>
+    <div class="error" id="errorMsg"></div>
   </div>
-
-  <script>
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-
-    if (getCookie('token')) {
-      window.location.href = '/dashboard';
-    }
-  </script>
-
-  <script src="js/ui.js"></script>
 
   <script>
     const card = document.getElementById('loginCard');
@@ -138,17 +111,16 @@
       }
 
       try {
-        const res = await fetch('https://hr-dashboardd.onrender.com/api/login', {
+        const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-          credentials: 'include'
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
         });
 
         const data = await res.json();
 
-        if (res.status === 200) {
-          errorMsg.style.display = 'none';
+        if (res.ok) {
           window.location.href = '/dashboard';
         } else {
           errorMsg.textContent = data.message;

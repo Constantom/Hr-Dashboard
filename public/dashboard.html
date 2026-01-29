@@ -125,6 +125,14 @@
   if (user) setupLogout('logoutBtn');
 </script>
 <script src="js/ui.js"></script>
+
+<script>
+const token = localStorage.getItem('token')
+if (!token) {
+  window.location.href = '/'
+}
+</script>
+
 <script>
   document.querySelectorAll("[data-counter]").forEach(counter => {
     const target = +counter.getAttribute("data-counter");

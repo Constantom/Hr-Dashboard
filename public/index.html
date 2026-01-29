@@ -145,46 +145,35 @@
   <script src="js/ui.js"></script>
 
   <script>
-    const card = document.getElementById('loginCard');
-    setTimeout(() => card.classList.add('active'), 100);
+const loginBtn = document.getElementById('loginBtn')
+const errorMsg = document.getElementById('errorMsg')
 
-    const loginBtn = document.getElementById('loginBtn');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const errorMsg = document.getElementById('errorMsg');
+loginBtn.addEventListener('click', async () => {
+  const email = document.getElementById('email').value.trim()
+  const password = document.getElementById('password').value.trim()
 
-    loginBtn.addEventListener('click', async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    })
 
-      if (!email || !password) {
-        errorMsg.textContent = 'Please enter email and password!';
-        errorMsg.style.display = 'block';
-        return;
-      }
+    const data = await res.json()
 
-      try {
-        const res = await fetch('https://hr-dashboardd.onrender.com/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-          credentials: 'include'
-        });
+    if (res.ok) {
+      localStorage.setItem('token', data.token)
+      window.location.href = '/dashboard'
+    } else {
+      errorMsg.textContent = data.message
+      errorMsg.style.display = 'block'
+    }
+  } catch {
+    errorMsg.textContent = 'Server error'
+    errorMsg.style.display = 'block'
+  }
+})
+</script>
 
-        const data = await res.json();
-
-        if (res.status === 200) {
-          errorMsg.style.display = 'none';
-          window.location.href = 'dashboard.html';
-        } else {
-          errorMsg.textContent = data.message;
-          errorMsg.style.display = 'block';
-        }
-      } catch (err) {
-        errorMsg.textContent = 'Server error. Try again.';
-        errorMsg.style.display = 'block';
-      }
-    });
-  </script>
 </body>
 </html>

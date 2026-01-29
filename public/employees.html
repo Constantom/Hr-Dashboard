@@ -124,6 +124,15 @@
 
 
 <script src="js/ui.js"></script>
+
+<script>
+const token = localStorage.getItem('token')
+if (!token) {
+  window.location.href = '/'
+}
+</script>
+
+
 <script>
   const modal = document.getElementById("employeeModal");
   const viewButtons = document.querySelectorAll(".btn-view");

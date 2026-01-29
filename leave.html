@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Leave Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+
+  <aside class="sidebar">
+    <h2>HR Admin</h2>
+
+    <a href="dashboard.html">Dashboard</a>
+    <a href="employees.html">Employees</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="leave.html" class="active">Leave</a>
+    <a href="hr.html">HR / Admin</a>
+    <button id="logoutBtn" class="theme-toggle">Logout</button>
+  </aside>
+
+
+  <main class="main">
+
+    <div class="topbar">
+      <h1>Leave Management</h1>
+      <button id="themeToggle" class="theme-toggle">Light / Dark</button>
+    </div>
+
+   
+    <section class="kpi-grid">
+      <div class="card kpi">
+        <h3>Annual Leave</h3>
+        <p>12 days</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>Sick Leave</h3>
+        <p>5 days</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>Casual Leave</h3>
+        <p>3 days</p>
+      </div>
+    </section>
+
+
+    <section style="margin-top: 40px;">
+      <div class="card">
+        <h3 style="margin-bottom: 20px;">Leave Requests</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Type</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mary Okafor</td>
+              <td>Annual</td>
+              <td>01-Feb-2026</td>
+              <td>05-Feb-2026</td>
+              <td><span class="badge warning">Pending</span></td>
+              <td>
+                <button class="btn btn-approve">Approve</button>
+                <button class="btn btn-reject">Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Samuel Ade</td>
+              <td>Sick</td>
+              <td>22-Jan-2026</td>
+              <td>24-Jan-2026</td>
+              <td><span class="badge success">Approved</span></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Grace Bello</td>
+              <td>Casual</td>
+              <td>25-Jan-2026</td>
+              <td>26-Jan-2026</td>
+              <td><span class="badge danger">Rejected</span></td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-top: 30px; text-align:right;">
+      <button class="btn">Request Leave</button>
+    </section>
+
+  </main>
+</div>
+
+
+<script src="js/auth.js"></script>
+<script>
+
+  const allowedRoles = ['Admin','HR Manager','Employee'];
+  const user = checkAccess(allowedRoles);
+
+  if(user) setupSidebar(user);
+
+
+  if(user) setupLogout('logoutBtn');
+</script>
+<script src="js/ui.js"></script>
+</body>
+</html>

@@ -20,27 +20,6 @@ Key features include:
 - **Theme Toggle**: Switch between light and dark mode.
 - **Responsive Design**: Mobile-friendly layout.
 
----
-
-## Project Structure
-
-hr-dashboard/
-│
-├─ public/
-│ ├─ index.html # Login page
-│ ├─ dashboard.html # Dashboard page
-│ ├─ employees.html # Employee management
-│ ├─ attendance.html # Attendance tracking
-│ ├─ leave.html # Leave management
-│ ├─ hr.html # HR/Admin panel
-│ ├─ css/
-│ │ └─ style.css # Global styles
-│ └─ js/
-│ ├─ ui.js # UI interactions and theme toggle
-│ └─ auth.js # Client-side auth helper
-│
-├─ users.json # User credentials for login
-├─ server.js # Node.js backend with Express
 
 #Logins & Roles
 [

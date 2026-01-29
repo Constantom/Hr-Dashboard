@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>HR Admin</h2>
+
+    <a href="dashboard.html">Dashboard</a>
+    <a href="employees.html">Employees</a>
+    <a href="attendance.html" class="active">Attendance</a>
+    <a href="leave.html">Leave</a>
+    <a href="hr.html">HR / Admin</a>
+    <button id="logoutBtn" class="theme-toggle">Logout</button>
+  </aside>
+
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <h1>Attendance</h1>
+      <button id="themeToggle" class="theme-toggle">Light / Dark</button>
+    </div>
+
+    <!-- KPI CARDS -->
+    <section class="kpi-grid">
+      <div class="card kpi">
+        <h3>Total Employees</h3>
+        <p>128</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>Present Today</h3>
+        <p>112</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>Absent</h3>
+        <p>9</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>Late</h3>
+        <p>7</p>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE TABLE -->
+    <section style="margin-top: 40px;">
+      <div class="card">
+        <h3 style="margin-bottom: 20px;">Attendance Records</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>John Doe</td>
+              <td>26-Jan-2026</td>
+              <td>09:01</td>
+              <td>17:15</td>
+              <td><span class="badge success">Present</span></td>
+            </tr>
+            <tr>
+              <td>Mary Okafor</td>
+              <td>26-Jan-2026</td>
+              <td>--</td>
+              <td>--</td>
+              <td><span class="badge warning">On Leave</span></td>
+            </tr>
+            <tr>
+              <td>Samuel Ade</td>
+              <td>26-Jan-2026</td>
+              <td>09:25</td>
+              <td>17:10</td>
+              <td><span class="badge warning">Late</span></td>
+            </tr>
+            <tr>
+              <td>Grace Bello</td>
+              <td>26-Jan-2026</td>
+              <td>--</td>
+              <td>--</td>
+              <td><span class="badge danger">Absent</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    
+    <section style="margin-top: 40px;">
+      <div class="card" style="text-align:center; padding:50px;">
+        <h3>Calendar View (Coming Soon)</h3>
+        <p>Interactive calendar placeholder for attendance trends.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Authentication -->
+<script src="js/auth.js"></script>
+<script>
+  // Only Admin, HR Manager, Team Lead can access
+  const allowedRoles = ['Admin','HR Manager','Team Lead'];
+  const user = checkAccess(allowedRoles);
+  if(user) setupSidebar(user);
+  if(user) setupLogout('logoutBtn');
+</script>
+<script src="js/ui.js"></script>
+</body>
+</html>

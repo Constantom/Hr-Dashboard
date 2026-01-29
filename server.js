@@ -5,49 +5,43 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const app = express(); // ✅ app FIRST
-app.set('trust proxy', 1); // ✅ trust Render proxy
+const app = express(); // ✅ MUST COME FIRST
+app.set('trust proxy', 1); // ✅ REQUIRED FOR RENDER
 
 const PORT = process.env.PORT || 3000;
-const SECRET_KEY = process.env.SECRET_KEY || "SUPER_SECRET_KEY";
+const SECRET_KEY = process.env.SECRET_KEY || 'SUPER_SECRET_KEY';
 
 /* ================= MIDDLEWARE ================= */
-app.use(express.json()); // ✅ REQUIRED
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* ================= LOAD USERS ================= */
-let users = [];
 const usersFile = path.join(__dirname, 'users.json');
+let users = [];
 
 try {
-  const data = fs.readFileSync(usersFile, 'utf8');
-  users = JSON.parse(data);
-  console.log('Users loaded successfully');
+  users = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+  console.log('Users loaded');
 } catch (err) {
-  console.error('Error loading users.json:', err);
+  console.error('Failed to load users.json');
 }
 
 /* ================= AUTH MIDDLEWARE ================= */
 function authenticateToken(req, res, next) {
   const token = req.cookies.token;
-  if (!token) {
-    return res.redirect('/index.html'); // ✅ redirect to login
-  }
+  if (!token) return res.redirect('/');
 
   jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) {
-      return res.redirect('/index.html');
-    }
+    if (err) return res.redirect('/');
     req.user = user;
     next();
   });
 }
 
-function authorizeRoles(allowedRoles) {
+function authorizeRoles(roles) {
   return (req, res, next) => {
-    if (!req.user || !allowedRoles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role)) {
       return res.status(403).send('Access denied');
     }
     next();
@@ -57,7 +51,10 @@ function authorizeRoles(allowedRoles) {
 /* ================= LOGIN ================= */
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  const user = users.find(u => u.email === email && u.password === password);
+
+  const user = users.find(
+    u => u.email === email && u.password === password
+  );
 
   if (!user) {
     return res.status(401).json({ message: 'Invalid credentials' });
@@ -71,45 +68,65 @@ app.post('/api/login', (req, res) => {
 
   res.cookie('token', token, {
     httpOnly: true,
-    secure: true,      // ✅ REQUIRED FOR RENDER (HTTPS)
-    sameSite: 'None',  // ✅ REQUIRED FOR RENDER
+    secure: true,        // ✅ REQUIRED FOR RENDER
+    sameSite: 'none',    // ✅ REQUIRED FOR RENDER
     maxAge: 2 * 60 * 60 * 1000
   });
 
-  res.json({ message: 'Login successful', role: user.role });
+  res.json({ message: 'Login successful' });
 });
 
 /* ================= LOGOUT ================= */
 app.post('/api/logout', (req, res) => {
   res.clearCookie('token', {
     secure: true,
-    sameSite: 'None'
+    sameSite: 'none'
   });
   res.json({ message: 'Logged out' });
 });
 
-/* ================= PROTECTED PAGES ================= */
-app.get('/dashboard', authenticateToken, authorizeRoles(['Admin','Team Lead','HR Manager','Employee']), (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/dashboard.html'));
-});
+/* ================= PAGES ================= */
+app.get('/dashboard',
+  authenticateToken,
+  authorizeRoles(['Admin', 'Team Lead', 'HR Manager', 'Employee']),
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/dashboard.html'));
+  }
+);
 
-app.get('/employees', authenticateToken, authorizeRoles(['Admin','HR Manager']), (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/employees.html'));
-});
+app.get('/employees',
+  authenticateToken,
+  authorizeRoles(['Admin', 'HR Manager']),
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/employees.html'));
+  }
+);
 
-app.get('/leave', authenticateToken, authorizeRoles(['Admin','HR Manager','Employee']), (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/leave.html'));
-});
+app.get('/leave',
+  authenticateToken,
+  authorizeRoles(['Admin', 'HR Manager', 'Employee']),
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/leave.html'));
+  }
+);
 
-app.get('/attendance', authenticateToken, authorizeRoles(['Admin','HR Manager','Team Lead']), (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/attendance.html'));
-});
+app.get('/attendance',
+  authenticateToken,
+  authorizeRoles(['Admin', 'HR Manager', 'Team Lead']),
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/attendance.html'));
+  }
+);
 
-app.get('/hr', authenticateToken, authorizeRoles(['Admin']), (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/hr.html'));
-});
+app.get('/hr',
+  authenticateToken,
+  authorizeRoles(['Admin']),
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/hr.html'));
+  }
+);
 
-/* ================= START SERVER ================= */
+/* ================= START ================= */
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

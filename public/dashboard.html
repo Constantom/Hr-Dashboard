@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HR Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>HR Admin</h2>
+
+    <a href="dashboard.html" class="active"><span>Dashboard</span></a>
+    <a href="employees.html"><span>Employees</span></a>
+    <a href="attendance.html"><span>Attendance</span></a>
+    <a href="leave.html"><span>Leave</span></a>
+    <a href="hr.html"><span>HR / Admin</span></a>
+    <button id="logoutBtn" class="theme-toggle">Logout</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <h1>Dashboard</h1>
+      <button id="themeToggle" class="theme-toggle">Light / Dark</button>
+    </div>
+
+    <!-- KPI CARDS -->
+    <section class="kpi-grid">
+      <div class="card kpi">
+        <h3>Total Employees</h3>
+        <p data-counter="128">0</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>Present Today</h3>
+        <p data-counter="112">0</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>On Leave</h3>
+        <p data-counter="9">0</p>
+      </div>
+
+      <div class="card kpi">
+        <h3>Departments</h3>
+        <p data-counter="6">0</p>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE CHART -->
+    <section style="margin-top: 40px;">
+      <div class="card">
+        <h3>Attendance Trend (Past Week)</h3>
+        <canvas id="attendanceChart" height="120"></canvas>
+      </div>
+    </section>
+
+    <!-- ACTIVITY TABLE -->
+    <section style="margin-top: 40px;">
+      <div class="card">
+        <h3 style="margin-bottom: 20px;">Recent Activity</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Action</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>John Doe</td>
+              <td>Check-in</td>
+              <td>Today</td>
+              <td><span class="badge success">Present</span></td>
+            </tr>
+            <tr>
+              <td>Mary Okafor</td>
+              <td>Leave Request</td>
+              <td>Today</td>
+              <td><span class="badge warning">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Samuel Ade</td>
+              <td>Check-in</td>
+              <td>Today</td>
+              <td><span class="badge success">Present</span></td>
+            </tr>
+            <tr>
+              <td>Grace Bello</td>
+              <td>Leave Approved</td>
+              <td>Yesterday</td>
+              <td><span class="badge success">Approved</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Authentication -->
+<script src="js/auth.js"></script>
+<script>
+  // Allowed roles for this pageee
+  const allowedRoles = ['Admin','HR Manager','Team Lead','Employee'];
+  const user = checkAccess(allowedRoles);
+
+  // Setup sidebar based on rolee
+  if (user) setupSidebar(user);
+
+  // Setup logoutt
+  if (user) setupLogout('logoutBtn');
+</script>
+<script src="js/ui.js"></script>
+<script>
+  document.querySelectorAll("[data-counter]").forEach(counter => {
+    const target = +counter.getAttribute("data-counter");
+    let count = 0;
+    const step = Math.ceil(target / 100);
+    const interval = setInterval(() => {
+      count += step;
+      if (count >= target) {
+        counter.textContent = target;
+        clearInterval(interval);
+      } else {
+        counter.textContent = count;
+      }
+    }, 15);
+  });
+
+
+  const ctx = document.getElementById('attendanceChart').getContext('2d');
+  const attendanceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets: [{
+        label: 'Present',
+        data: [110, 112, 108, 115, 112, 107, 109],
+        borderColor: '#2a9d8f',
+        backgroundColor: 'rgba(42,157,143,0.2)',
+        tension: 0.4,
+        fill: true
+      },{
+        label: 'Absent',
+        data: [10, 9, 12, 8, 9, 11, 10],
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.2)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text') }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text') },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        y: {
+          ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text') },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

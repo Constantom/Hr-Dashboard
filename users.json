@@ -1,0 +1,22 @@
+[
+  {
+    "email": "admin@hr.com",
+    "password": "admin123",
+    "role": "Admin"
+  },
+  {
+    "email": "hrmanager@hr.com",
+    "password": "hr123",
+    "role": "HR Manager"
+  },
+  {
+    "email": "teamlead@hr.com",
+    "password": "team123",
+    "role": "Team Lead"
+  },
+  {
+    "email": "employee@hr.com",
+    "password": "emp123",
+    "role": "Employee"
+  }
+]

@@ -5,16 +5,19 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const app = express();
-const PORT = process.env.PORT || 3000; // Use Render's dynamic port
+const app = express(); // ✅ app FIRST
+app.set('trust proxy', 1); // ✅ trust Render proxy
+
+const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY || "SUPER_SECRET_KEY";
 
-// Middleware
+/* ================= MIDDLEWARE ================= */
+app.use(express.json()); // ✅ REQUIRED
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Load users
+/* ================= LOAD USERS ================= */
 let users = [];
 const usersFile = path.join(__dirname, 'users.json');
 
@@ -26,47 +29,66 @@ try {
   console.error('Error loading users.json:', err);
 }
 
-// Authentication Middleware
+/* ================= AUTH MIDDLEWARE ================= */
 function authenticateToken(req, res, next) {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+  if (!token) {
+    return res.redirect('/index.html'); // ✅ redirect to login
+  }
 
   jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.status(403).json({ message: 'Forbidden' });
+    if (err) {
+      return res.redirect('/index.html');
+    }
     req.user = user;
     next();
   });
 }
 
-// Role-based Authorization
 function authorizeRoles(allowedRoles) {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'Forbidden' });
+      return res.status(403).send('Access denied');
     }
     next();
   };
 }
 
-// Login
+/* ================= LOGIN ================= */
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email && u.password === password);
 
-  if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+  if (!user) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
 
-  const token = jwt.sign({ email: user.email, role: user.role }, SECRET_KEY, { expiresIn: '2h' });
-  res.cookie('token', token, { httpOnly: true, sameSite: 'Lax' });
+  const token = jwt.sign(
+    { email: user.email, role: user.role },
+    SECRET_KEY,
+    { expiresIn: '2h' }
+  );
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,      // ✅ REQUIRED FOR RENDER (HTTPS)
+    sameSite: 'None',  // ✅ REQUIRED FOR RENDER
+    maxAge: 2 * 60 * 60 * 1000
+  });
+
   res.json({ message: 'Login successful', role: user.role });
 });
 
-// Logout
+/* ================= LOGOUT ================= */
 app.post('/api/logout', (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    secure: true,
+    sameSite: 'None'
+  });
   res.json({ message: 'Logged out' });
 });
 
-// Protected Pages
+/* ================= PROTECTED PAGES ================= */
 app.get('/dashboard', authenticateToken, authorizeRoles(['Admin','Team Lead','HR Manager','Employee']), (req, res) => {
   res.sendFile(path.join(__dirname, 'public/dashboard.html'));
 });
@@ -87,10 +109,7 @@ app.get('/hr', authenticateToken, authorizeRoles(['Admin']), (req, res) => {
   res.sendFile(path.join(__dirname, 'public/hr.html'));
 });
 
-/* Catch-all for frontend routing (optional for single-page behavior)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
-});*/
-
-// Start server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+/* ================= START SERVER ================= */
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
